@@ -2,7 +2,6 @@
 /**
  * @file z test
  * @module mongodb-restore
- * @package mongodb-restore
  * @subpackage test
  * @version 0.0.1
  * @author hex7c0 <hex7c0@gmail.com>
@@ -13,12 +12,10 @@
  * initialize module
  */
 // import
-try {
-  var fs = require('fs');
-} catch (MODULE_NOT_FOUND) {
-  console.error(MODULE_NOT_FOUND);
-  process.exit(1);
-}
+var client = require('mongodb').MongoClient;
+var fs = require('fs');
+// load
+var URI = process.env.URI;
 
 /*
  * test module
@@ -79,10 +76,26 @@ describe('last', function() {
         fs.rmdirSync(database);
       });
     }
+
     it('should rm db directory', function(done) {
 
       rmDir(ROOT);
       done();
+    });
+  });
+
+  describe('end', function() {
+
+    it('should drop database for next test', function(done) {
+
+      client.connect(URI, function(err, db) {
+
+        db.dropDatabase(function(err, collection) {
+
+          db.close();
+          done();
+        });
+      });
     });
   });
 });
